@@ -1,0 +1,10 @@
+project(rossym-conv)
+cmake_minimum_required(VERSION 3.16)
+
+set( EXECUTABLE_OUTPUT_PATH ../bin)
+
+add_executable(rossym-conv
+	main.cc
+)
+
+target_link_libraries(rossym-conv -lpeFile -lexshit -lstdshit)
