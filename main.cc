@@ -30,6 +30,13 @@ bool compar(const char* prev, const char* cur)
   return false;
 }
 
+bool filter_junk(cch* name)
+{
+  return !strcmp(name, "_section_alignment__")
+      || !strcmp(name, "_size_of_stack_commit__")
+      || !strcmp(name, "_size_of_heap_commit__");
+}
+
 void add_symbol(cch* name, cch* fileName, int addr)
 {
   // exclude duplicates
@@ -67,6 +74,7 @@ BOOL parse_rossym(const void* rsym_ptr, int rsymlen)
     {
       const char* SymbolName = Strings + Entry->FunctionOffset;
       const char* FileName = Strings + Entry->FileOffset;
+      if(filter_junk(SymbolName)) continue;
       add_symbol(SymbolName, FileName, Entry->Address);
     }
 
