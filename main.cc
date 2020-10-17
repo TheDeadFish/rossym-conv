@@ -6,7 +6,9 @@ const char progName[] = "rossym-conv";
 
 PeFile peFile;
 
-char* prevName;
+cch* prevName;
+char* prevName2;
+
 
 extern "C"
 char* demangle(const char* name);
@@ -40,9 +42,13 @@ bool filter_junk(cch* name)
 void add_symbol(cch* name, cch* fileName, int addr)
 {
   // exclude duplicates
-  char* curName = demangle_(name);
-  if(prevName && compar(prevName, curName)) return;
-  free_repl(prevName, curName);
+  if(prevName && compar(prevName, name)) return;
+  prevName = name;
+
+  // exclude duplicates (mangled)
+  char* name2 = demangle_(name);
+  SCOPE_EXIT(free_repl(prevName2, name2));
+  if(prevName2 && compar(prevName2, name)) return;
 
   // add valid symbol
   if(peFile.rvaToSect(addr, 0))
