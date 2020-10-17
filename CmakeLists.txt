@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 3.16)
 set( EXECUTABLE_OUTPUT_PATH ../bin)
 
 add_executable(rossym-conv
-	main.cc
+	main.cc demangle.c
 )
 
-target_link_libraries(rossym-conv -lpeFile -lexshit -lstdshit)
+target_link_libraries(rossym-conv -lpeFile -lexshit -lstdshit 
+	-l:binutils/libiberty.a
+)

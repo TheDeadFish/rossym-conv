@@ -1,17 +1,41 @@
 #include "stdshit.h"
 #include "peFile/peFile.h"
 #include "rossym.h"
+
 const char progName[] = "rossym-conv";
 
 PeFile peFile;
 
-cch* prevName;
+char* prevName;
+
+extern "C"
+char* demangle(const char* name);
+
+char* demangle_(const char* name)
+{
+  char* str = demangle(name);
+  if(!str) str = xstrdup(name);
+  return str;
+}
+
+bool compar(const char* prev, const char* cur)
+{
+  if(!strcmp(prev, cur)) return true;
+
+  if(cur[0] == '~') {
+    xstr name = xstrfmt("%s::%s", cur+1, cur);
+    if(!strcmp(prev, name)) return true;
+  }
+
+  return false;
+}
 
 void add_symbol(cch* name, cch* fileName, int addr)
 {
   // exclude duplicates
-  if(prevName && !strcmp(prevName, name)) return;
-  prevName = name;
+  char* curName = demangle_(name);
+  if(prevName && compar(prevName, curName)) return;
+  free_repl(prevName, curName);
 
   // add valid symbol
   if(peFile.rvaToSect(addr, 0))
